@@ -1,0 +1,75 @@
+name: TimeTracker
+options:
+  bundleIdPrefix: com.example.timetracker
+configs:
+  Debug: debug
+  Release: release
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""
+    SWIFT_VERSION: 5.9
+    IPHONEOS_DEPLOYMENT_TARGET: 17.0
+    MACOSX_DEPLOYMENT_TARGET: 14.0
+    WATCHOS_DEPLOYMENT_TARGET: 10.0
+    CODE_SIGN_STYLE: Automatic
+targetTemplates:
+  SharedApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: Shared
+      - path: iOS
+      - path: Resources
+    settings:
+      base:
+        SUPPORTS_MACCATALYST: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - target: TimeTrackerShared
+  WatchApp:
+    type: watchOSApplication
+    platform: watchOS
+    sources:
+      - path: Shared
+      - path: watchOS
+    dependencies:
+      - target: TimeTrackerShared
+  SharedFramework:
+    type: framework
+    platform: iOS
+    sources:
+      - path: Shared
+      - path: Resources
+    settings:
+      base:
+        SUPPORTS_MACCATALYST: YES
+    scheme:
+      testTargets: []
+targets:
+  TimeTracker:
+    templates: [SharedApp]
+    platform: iOS
+  TimeTrackerMac:
+    templates: [SharedApp]
+    platform: iOS
+    settings:
+      base:
+        SUPPORTS_MACCATALYST: YES
+  TimeTrackerWatch:
+    templates: [WatchApp]
+  TimeTrackerShared:
+    templates: [SharedFramework]
+    platform: iOS
+schemes:
+  TimeTracker:
+    build:
+      targets:
+        TimeTracker: [run, archive]
+        TimeTrackerWatch: [run, archive]
+    run:
+      config: Debug
+  TimeTrackerShared:
+    build:
+      targets:
+        TimeTrackerShared: [run]
+      config: Debug
